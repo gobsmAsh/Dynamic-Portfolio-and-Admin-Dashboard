@@ -1,0 +1,104 @@
+{
+    "profile": {
+        "name": "Student1",
+        "title": "Engineering Student | Aspiring Mechanic",
+        "bio": "I enjoy exploring autos and building projects that make a difference.",
+        "email": "you@example.com",
+        "location": "India",
+        "github": "https://github.com/yourusername",
+        "linkedin": "https://linkedin.com/in/yourusername",
+        "website": ""
+    },
+    "skills": [
+        {
+            "id": 1,
+            "name": "Python",
+            "category": "Programming",
+            "proficiency": "Beginner"
+        },
+        {
+            "id": 2,
+            "name": "C",
+            "category": "Programming",
+            "proficiency": "Beginner"
+        },
+        {
+            "id": 3,
+            "name": "HTML",
+            "category": "Web Development",
+            "proficiency": "Beginner"
+        },
+        {
+            "id": 4,
+            "name": "CSS",
+            "category": "Web Development",
+            "proficiency": "Beginner"
+        },
+        {
+            "id": 5,
+            "name": "Bootstrap",
+            "category": "Web Development",
+            "proficiency": "Beginner"
+        }
+    ],
+    "projects": [
+        {
+            "title": "Dynamic Portfolio",
+            "year": 2026,
+            "description": "I built a portfolio and admin dashboard",
+            "technologies": [
+                "python",
+                "html",
+                "bootstrap"
+            ],
+            "image_url": "",
+            "github_url": "",
+            "demo_url": "",
+            "id": 3,
+            "featured": false
+        },
+        {
+            "title": "Auto",
+            "year": 2025,
+            "description": "Jugaad bike",
+            "technologies": [
+                "Axle mounting",
+                "CAD"
+            ],
+            "image_url": "",
+            "github_url": "",
+            "demo_url": "",
+            "id": 4,
+            "featured": false
+        }
+    ],
+    "achievements": [
+        {
+            "id": 1,
+            "title": "Python Programming",
+            "description": "Completed introductory Python programming practice.",
+            "issuer": "Self Learning",
+            "date": "2026",
+            "credential_url": "",
+            "image_url": ""
+        },
+        {
+            "id": 2,
+            "title": "Engineering Project",
+            "description": "Worked on a project exploring engineering solutions.",
+            "issuer": "Academic Project",
+            "date": "2026",
+            "credential_url": "",
+            "image_url": ""
+        },
+        {
+            "title": "Presentation",
+            "issuer": "ICTS TIFR",
+            "date": "2025",
+            "credential_url": "",
+            "description": "Open Day presentation. Fluid mechanics",
+            "image_url": "",
+            "id": 3
+        }
+    ]
+}

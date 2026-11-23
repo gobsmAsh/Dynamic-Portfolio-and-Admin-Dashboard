@@ -1,0 +1,612 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Portfolio Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --forest: #244b3b;
+            --forest-light: #e8f0eb;
+            --cream: #f7f7f2;
+            --text: #28372f;
+            --muted: #829087;
+        }
+
+        body {
+            background: var(--cream);
+            color: var(--text);
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .sidebar {
+            background: var(--forest);
+            color: white;
+            min-height: 100vh;
+            padding: 30px 18px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            color: #dce9df;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #37634f;
+            color: white;
+        }
+
+        .main-content {
+            padding: 35px;
+        }
+
+        .welcome {
+            font-size: 29px;
+            font-weight: 700;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .stat-card, .content-card {
+            background: white;
+            border: 1px solid #e9ede9;
+            border-radius: 16px;
+            padding: 23px;
+            box-shadow: 0 5px 20px rgba(35, 60, 45, 0.035);
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            background: var(--forest-light);
+            color: var(--forest);
+            border-radius: 12px;
+            font-size: 21px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .section-block {
+            margin-top: 42px;
+            scroll-margin-top: 25px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 9px;
+            padding: 10px 12px;
+            border-color: #e1e8e2;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #6b987e;
+            box-shadow: 0 0 0 3px rgba(70, 120, 85, .1);
+        }
+
+        .btn-forest {
+            background: var(--forest);
+            color: white;
+            border-radius: 9px;
+            padding: 10px 17px;
+        }
+
+        .btn-forest:hover {
+            background: #19392c;
+            color: white;
+        }
+
+        .item-card {
+            background: white;
+            border: 1px solid #e9ede9;
+            border-radius: 13px;
+            padding: 19px;
+            margin-bottom: 13px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--forest-light);
+            color: var(--forest);
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin: 3px;
+        }
+
+        details summary {
+            cursor: pointer;
+            color: var(--forest);
+            font-weight: 600;
+        }
+
+        .danger-link {
+            color: #b34d4d;
+        }
+
+        @media(max-width: 767px) {
+            .sidebar {
+                min-height: auto;
+            }
+            .main-content {
+                padding: 22px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid">
+<div class="row">
+
+    <!-- SIDEBAR -->
+    <aside class="col-md-3 col-lg-2 sidebar">
+        <div class="brand">
+            <i class="bi bi-flower1 me-2"></i> My Portfolio
+        </div>
+
+        <small class="text-uppercase opacity-50">Workspace</small>
+
+        <a href="#overview"><i class="bi bi-grid me-2"></i> Overview</a>
+        <a href="#profile"><i class="bi bi-person me-2"></i> Profile</a>
+        <a href="#projects"><i class="bi bi-folder me-2"></i> Projects</a>
+        <a href="#skills"><i class="bi bi-lightning me-2"></i> Skills</a>
+        <a href="#achievements"><i class="bi bi-award me-2"></i> Achievements</a>
+
+        <hr class="border-light opacity-25">
+
+        <a href="{{ url_for('home') }}">
+            <i class="bi bi-globe me-2"></i> View Website
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            <i class="bi bi-box-arrow-left me-2"></i> Logout
+        </a>
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="col-md-9 col-lg-10 main-content">
+
+        <div id="overview">
+            <p class="muted mb-1">YOUR WORKSPACE</p>
+            <h1 class="welcome">Good to see you, {{ data.profile.name }}.</h1>
+            <p class="muted">Manage and update your portfolio from one place.</p>
+        </div>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show mt-3">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+
+        <!-- OVERVIEW CARDS -->
+        <div class="row g-3 mt-3">
+
+            <div class="col-sm-6 col-xl-4">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-folder"></i></div>
+                    <h2 class="mt-3">{{ data.projects|length }}</h2>
+                    <p class="muted mb-0">Projects</p>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-4">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-lightning"></i></div>
+                    <h2 class="mt-3">{{ data.skills|length }}</h2>
+                    <p class="muted mb-0">Skills</p>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-4">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-award"></i></div>
+                    <h2 class="mt-3">{{ data.achievements|length }}</h2>
+                    <p class="muted mb-0">Achievements</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- PROFILE -->
+        <section id="profile" class="section-block">
+            <h3 class="section-title">Profile</h3>
+            <p class="muted">Manage your personal information.</p>
+
+            <div class="content-card mt-3">
+                <form method="POST" action="{{ url_for('update_profile') }}">
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Full name</label>
+                            <input class="form-control" name="name" value="{{ data.profile.name }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Professional title</label>
+                            <input class="form-control" name="title" value="{{ data.profile.title }}">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Biography</label>
+                            <textarea class="form-control" name="bio" rows="3">{{ data.profile.bio }}</textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="{{ data.profile.email }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Location</label>
+                            <input class="form-control" name="location" value="{{ data.profile.location }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">GitHub URL</label>
+                            <input class="form-control" name="github" value="{{ data.profile.github }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">LinkedIn URL</label>
+                            <input class="form-control" name="linkedin" value="{{ data.profile.linkedin }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Website URL</label>
+                            <input class="form-control" name="website" value="{{ data.profile.website }}">
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-forest mt-4">
+                        <i class="bi bi-check2 me-1"></i> Save Profile
+                    </button>
+                </form>
+            </div>
+        </section>
+
+
+        <!-- PROJECTS -->
+        <section id="projects" class="section-block">
+            <h3 class="section-title">Projects</h3>
+            <p class="muted">Add and manage your work.</p>
+
+            <div class="content-card mt-3">
+                <h5>Add a new project</h5>
+
+                <form method="POST" action="{{ url_for('add_item', section='projects') }}">
+                    <div class="row g-3 mt-1">
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="title" placeholder="Project title" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="year" type="number" placeholder="Year">
+                        </div>
+
+                        <div class="col-12">
+                            <textarea class="form-control" name="description" rows="2" placeholder="Project description" required></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="technologies" placeholder="Technologies, separated by commas">
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="image_url" placeholder="Image URL (optional)">
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="github_url" placeholder="GitHub URL (optional)">
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="demo_url" placeholder="Live demo URL (optional)">
+                        </div>
+
+                        <div class="col-12">
+                            <label><input type="checkbox" name="featured"> Mark as featured project</label>
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-forest mt-3">
+                        <i class="bi bi-plus-lg me-1"></i> Add Project
+                    </button>
+                </form>
+            </div>
+
+            <h5 class="mt-4 mb-3">Your projects</h5>
+
+            {% for item in data.projects %}
+            <div class="item-card">
+                <div class="d-flex justify-content-between flex-wrap gap-2">
+                    <div>
+                        <h5>{{ item.title }}</h5>
+                        <p class="muted mb-2">{{ item.description }}</p>
+                        {% for tech in item.technologies %}
+                            <span class="tag">{{ tech }}</span>
+                        {% endfor %}
+                        {% if item.featured %}
+                            <span class="tag">Featured</span>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <form method="POST"
+                              action="{{ url_for('delete_item', section='projects', item_id=item.id) }}"
+                              onsubmit="return confirm('Delete this project?');">
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <details class="mt-3">
+                    <summary>Edit project</summary>
+
+                    <form class="mt-3" method="POST"
+                          action="{{ url_for('update_item', section='projects', item_id=item.id) }}">
+
+                        <input class="form-control mb-2" name="title" value="{{ item.title }}" required>
+                        <textarea class="form-control mb-2" name="description" rows="2">{{ item.description }}</textarea>
+                        <input class="form-control mb-2" name="technologies" value="{{ item.technologies|join(', ') }}">
+                        <input class="form-control mb-2" name="year" type="number" value="{{ item.year or '' }}">
+                        <input class="form-control mb-2" name="github_url" value="{{ item.github_url }}" placeholder="GitHub URL">
+                        <input class="form-control mb-2" name="demo_url" value="{{ item.demo_url }}" placeholder="Demo URL">
+                        <input class="form-control mb-2" name="image_url" value="{{ item.image_url }}" placeholder="Image URL">
+
+                        <label class="mb-3">
+                            <input type="checkbox" name="featured" {% if item.featured %}checked{% endif %}>
+                            Featured project
+                        </label>
+
+                        <br>
+                        <button class="btn btn-forest btn-sm">Save changes</button>
+                    </form>
+                </details>
+            </div>
+            {% else %}
+                <p class="muted">No projects added yet.</p>
+            {% endfor %}
+        </section>
+
+
+        <!-- SKILLS -->
+        <section id="skills" class="section-block">
+            <h3 class="section-title">Skills</h3>
+            <p class="muted">Manage your technical and professional skills.</p>
+
+            <div class="content-card mt-3">
+                <h5>Add a new skill</h5>
+
+                <form method="POST" action="{{ url_for('add_item', section='skills') }}">
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-4">
+                            <input class="form-control" name="name" placeholder="Skill name" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <input class="form-control" name="category" placeholder="Category">
+                        </div>
+
+                        <div class="col-md-4">
+                            <select class="form-select" name="proficiency">
+                                <option value="">Select proficiency</option>
+                                <option>Beginner</option>
+                                <option>Intermediate</option>
+                                <option>Advanced</option>
+                                <option>Expert</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-forest mt-3">
+                        <i class="bi bi-plus-lg me-1"></i> Add Skill
+                    </button>
+                </form>
+            </div>
+
+            <h5 class="mt-4 mb-3">Your skills</h5>
+
+            {% for item in data.skills %}
+            <div class="item-card">
+                <div class="d-flex justify-content-between flex-wrap gap-2">
+                    <div>
+                        <strong>{{ item.name }}</strong>
+                        <span class="tag">{{ item.category }}</span>
+                        <span class="tag">{{ item.proficiency or 'Not specified' }}</span>
+                    </div>
+
+                    <form method="POST"
+                          action="{{ url_for('delete_item', section='skills', item_id=item.id) }}"
+                          onsubmit="return confirm('Delete this skill?');">
+                        <button class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+
+                <details class="mt-3">
+                    <summary>Edit skill</summary>
+
+                    <form class="row g-2 mt-2" method="POST"
+                          action="{{ url_for('update_item', section='skills', item_id=item.id) }}">
+
+                        <div class="col-md-4">
+                            <input class="form-control" name="name" value="{{ item.name }}" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <input class="form-control" name="category" value="{{ item.category }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <select class="form-select" name="proficiency">
+                                {% for level in ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+                                <option value="{{ level }}" {% if item.proficiency == level %}selected{% endif %}>
+                                    {{ level }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <button class="btn btn-forest btn-sm">Save changes</button>
+                        </div>
+                    </form>
+                </details>
+            </div>
+            {% else %}
+                <p class="muted">No skills added yet.</p>
+            {% endfor %}
+        </section>
+
+
+        <!-- ACHIEVEMENTS -->
+        <section id="achievements" class="section-block">
+            <h3 class="section-title">Achievements</h3>
+            <p class="muted">Showcase certificates, awards and milestones.</p>
+
+            <div class="content-card mt-3">
+                <h5>Add an achievement</h5>
+
+                <form method="POST" action="{{ url_for('add_item', section='achievements') }}">
+                    <div class="row g-3 mt-1">
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="title" placeholder="Achievement title" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="issuer" placeholder="Issuing organisation">
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="date" placeholder="Date or year">
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="credential_url" placeholder="Certificate URL">
+                        </div>
+
+                        <div class="col-12">
+                            <textarea class="form-control" name="description" rows="2" placeholder="Description" required></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <input class="form-control" name="image_url" placeholder="Image URL (optional)">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-forest mt-3">
+                        <i class="bi bi-plus-lg me-1"></i> Add Achievement
+                    </button>
+                </form>
+            </div>
+
+            <h5 class="mt-4 mb-3">Your achievements</h5>
+
+            {% for item in data.achievements %}
+            <div class="item-card">
+                <div class="d-flex justify-content-between flex-wrap gap-2">
+                    <div>
+                        <h5>{{ item.title }}</h5>
+                        <p class="muted mb-1">{{ item.description }}</p>
+                        <span class="tag">{{ item.issuer }}</span>
+                        <span class="tag">{{ item.date }}</span>
+                    </div>
+
+                    <form method="POST"
+                          action="{{ url_for('delete_item', section='achievements', item_id=item.id) }}"
+                          onsubmit="return confirm('Delete this achievement?');">
+                        <button class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+
+                <details class="mt-3">
+                    <summary>Edit achievement</summary>
+
+                    <form class="row g-2 mt-2" method="POST"
+                          action="{{ url_for('update_item', section='achievements', item_id=item.id) }}">
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="title" value="{{ item.title }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="issuer" value="{{ item.issuer }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="date" value="{{ item.date }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="form-control" name="credential_url" value="{{ item.credential_url }}">
+                        </div>
+
+                        <div class="col-12">
+                            <textarea class="form-control" name="description" rows="2">{{ item.description }}</textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <input class="form-control" name="image_url" value="{{ item.image_url }}" placeholder="Image URL">
+                        </div>
+
+                        <div class="col-12">
+                            <button class="btn btn-forest btn-sm">Save changes</button>
+                        </div>
+                    </form>
+                </details>
+            </div>
+            {% else %}
+                <p class="muted">No achievements added yet.</p>
+            {% endfor %}
+        </section>
+
+        <footer class="text-center muted mt-5 pt-4 border-top">
+            Your portfolio management workspace
+        </footer>
+
+    </main>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
