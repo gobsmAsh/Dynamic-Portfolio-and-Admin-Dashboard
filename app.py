@@ -22,6 +22,19 @@ def login_required(function):
         return function(*args, **kwargs)
     return wrapper
 
+def api_login_required(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        if not session.get("logged_in"):
+            return jsonify({
+                "error": "Authentication required. Please log in."
+            }), 401
+
+        return function(*args, **kwargs)
+
+    return wrapper
+
+
 
 # -------------------------
 # PUBLIC PORTFOLIO
@@ -273,6 +286,7 @@ def api_get_profile():
 
 # UPDATE profile
 @app.route("/api/profile", methods=["PUT"])
+@api_login_required
 def api_update_profile():
     values = request.get_json(silent=True)
 
@@ -319,6 +333,7 @@ def api_get_items(section, item_id=None):
 
 # ADD an item
 @app.route("/api/<section>", methods=["POST"])
+@api_login_required
 def api_add_item(section):
     if section not in ITEM_FIELDS:
         return jsonify({"error": "Invalid section."}), 404
@@ -365,6 +380,7 @@ def api_add_item(section):
 
 # UPDATE an item
 @app.route("/api/<section>/<int:item_id>", methods=["PUT"])
+@api_login_required
 def api_update_item(section, item_id):
     if section not in ITEM_FIELDS:
         return jsonify({"error": "Invalid section."}), 404
@@ -400,6 +416,7 @@ def api_update_item(section, item_id):
 
 # DELETE an item
 @app.route("/api/<section>/<int:item_id>", methods=["DELETE"])
+@api_login_required
 def api_delete_item(section, item_id):
     if section not in ITEM_FIELDS:
         return jsonify({"error": "Invalid section."}), 404
